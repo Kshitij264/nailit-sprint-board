@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Task } from '@/types';
 import Column from '@/components/Column';
@@ -22,6 +22,8 @@ const columnData: ColumnData[] = [
 export default function BoardPage() {
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState('all');
 
   useEffect(() => {
     const token = localStorage.getItem('auth-token');
@@ -40,6 +42,17 @@ export default function BoardPage() {
     };
     fetchTasks();
   }, []);
+  
+  // Memoize the filtered tasks to avoid re-calculating on every render
+  const filteredTasks = useMemo(() => {
+    return tasks
+      .filter((task) =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .filter((task) =>
+        priorityFilter === 'all' ? true : task.priority === priorityFilter
+      );
+  }, [tasks, searchQuery, priorityFilter]);
 
   const handleLogout = () => {
     localStorage.removeItem('auth-token');
@@ -115,8 +128,29 @@ export default function BoardPage() {
       <Toaster position="bottom-right" />
       <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
         <div className="flex h-screen flex-col bg-gray-900 text-white">
-          <header className="flex items-center justify-between p-4 border-b-2 border-gray-700">
+          <header className="flex items-center justify-between p-4 border-b-2 border-gray-700 flex-wrap gap-4">
             <h1 className="text-2xl font-bold">Nailit Sprint Board</h1>
+            
+            <div className="flex items-center gap-4">
+               <input
+                type="text"
+                placeholder="Search by title..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-sm"
+              />
+              <select
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+                className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-sm"
+              >
+                <option value="all">All Priorities</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
             <div className="flex items-center gap-4">
               <CreateTaskModal onTaskCreate={handleCreateTask} />
               <button
@@ -127,13 +161,14 @@ export default function BoardPage() {
               </button>
             </div>
           </header>
+
           <main className="flex flex-grow p-4 space-x-4 overflow-x-auto">
             {columnData.map((column) => (
               <Column
                 key={column.id}
                 id={column.id}
                 title={column.title}
-                tasks={tasks.filter((task) => task.status === column.id)}
+                tasks={filteredTasks.filter((task) => task.status === column.id)}
                 onMoveTask={handleMoveTask}
               />
             ))}

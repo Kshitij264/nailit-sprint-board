@@ -22,7 +22,7 @@
       "id": "3",
       "title": "Implement D&D",
       "description": "Add drag and drop functionality",
-      "status": "inprogress",
+      "status": "done",
       "priority": "high",
       "createdAt": "2025-01-03T10:00:00Z",
       "updatedAt": "2025-01-03T10:00:00Z"
