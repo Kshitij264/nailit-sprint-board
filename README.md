@@ -6,12 +6,6 @@ This is a solution for the Nailit frontend intern assignment. The goal was to bu
 
 ---
 
-## Time Spent
-
-* **Actual Time:** 57 minutes
-
----
-
 ## Tech Stack & Decisions
 
 I built this project using the required stack:
