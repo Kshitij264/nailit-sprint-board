@@ -13,7 +13,7 @@
       "id": "2",
       "title": "Build card",
       "description": "Create the main task card component",
-      "status": "todo",
+      "status": "inprogress",
       "priority": "high",
       "createdAt": "2025-01-02T10:00:00Z",
       "updatedAt": "2025-01-02T10:00:00Z"
@@ -31,7 +31,7 @@
       "id": "4",
       "title": "Deploy to Vercel",
       "description": "Setup production deployment",
-      "status": "done",
+      "status": "todo",
       "priority": "low",
       "createdAt": "2025-01-04T10:00:00Z",
       "updatedAt": "2025-01-04T10:00:00Z"
