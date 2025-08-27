@@ -1,0 +1,40 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Wire nav",
+      "description": "Sketch top nav",
+      "status": "todo",
+      "priority": "medium",
+      "createdAt": "2025-01-01T10:00:00Z",
+      "updatedAt": "2025-01-01T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Build card",
+      "description": "Create the main task card component",
+      "status": "todo",
+      "priority": "high",
+      "createdAt": "2025-01-02T10:00:00Z",
+      "updatedAt": "2025-01-02T10:00:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Implement D&D",
+      "description": "Add drag and drop functionality",
+      "status": "inprogress",
+      "priority": "high",
+      "createdAt": "2025-01-03T10:00:00Z",
+      "updatedAt": "2025-01-03T10:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Deploy to Vercel",
+      "description": "Setup production deployment",
+      "status": "done",
+      "priority": "low",
+      "createdAt": "2025-01-04T10:00:00Z",
+      "updatedAt": "2025-01-04T10:00:00Z"
+    }
+  ]
+}
