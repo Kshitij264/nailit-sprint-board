@@ -9,10 +9,14 @@ import TaskCardSkeleton from '@/components/TaskCardSkeleton';
 import { DndContext, closestCorners, DragEndEvent } from '@dnd-kit/core';
 import { Toaster, toast } from 'react-hot-toast';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 type ColumnData = {
   id: 'todo' | 'inprogress' | 'done';
   title: string;
 };
+
+// ... (The rest of the file is identical)
 
 const columnData: ColumnData[] = [
   { id: 'todo', title: 'Todo' },
@@ -32,8 +36,13 @@ export default function BoardPage() {
   const fetchTasks = async () => {
     setIsLoading(true);
     setError(null);
+    
+    // START OF THE ONLY CHANGE
+    console.log("Attempting to fetch from:", API_BASE_URL);
+    // END OF THE ONLY CHANGE
+
     try {
-      const response = await fetch('http://localhost:3001/tasks');
+      const response = await fetch(`${API_BASE_URL}/tasks`);
       if (!response.ok) throw new Error('Failed to fetch tasks.');
       const data = await response.json();
       setTasks(data);
@@ -64,12 +73,11 @@ export default function BoardPage() {
   };
   
   const handleCreateTask = async (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => {
-    // ... (rest of the function is unchanged)
     const optimisticTask: Task = { ...taskData, id: `temp-${Date.now()}`, status: 'todo', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
     const originalTasks = [...tasks];
     setTasks((prev) => [...prev, optimisticTask]);
     try {
-      const response = await fetch('http://localhost:3001/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...taskData, status: 'todo' }) });
+      const response = await fetch(`${API_BASE_URL}/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...taskData, status: 'todo' }) });
       if (!response.ok) throw new Error('Failed to create task.');
       const newTask = await response.json();
       setTasks((prev) => prev.map((t) => (t.id === optimisticTask.id ? newTask : t)));
@@ -81,11 +89,10 @@ export default function BoardPage() {
   };
 
   const handleMoveTask = async (taskId: string, newStatus: Task['status']) => {
-    // ... (rest of the function is unchanged)
     const originalTasks = [...tasks];
     setTasks((prevTasks) => { const activeIndex = prevTasks.findIndex((t) => t.id === taskId); if (activeIndex === -1) return prevTasks; const updatedTasks = [...prevTasks]; updatedTasks[activeIndex] = { ...updatedTasks[activeIndex], status: newStatus }; return updatedTasks; });
     try {
-      const response = await fetch(`http://localhost:3001/tasks/${taskId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
+      const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) });
       if (!response.ok) throw new Error('Failed to update task status.');
       toast.success('Task moved successfully!');
     } catch (error) {
@@ -95,7 +102,6 @@ export default function BoardPage() {
   };
   
   const handleDragEnd = async (event: DragEndEvent) => {
-    // ... (rest of the function is unchanged)
     const { active, over } = event; if (!over) return; const activeId = active.id as string; const overId = over.id as string; if (activeId === overId) return; const activeTask = tasks.find((t) => t.id === activeId); if (!activeTask) return; const overContainerId = over.data.current?.sortable?.containerId || over.id; const newStatus = columnData.find(c => c.id === overContainerId)?.id; if (!newStatus || activeTask.status === newStatus) return; handleMoveTask(activeId, newStatus);
   };
 
