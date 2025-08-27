@@ -1,3 +1,5 @@
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Task } from '@/types';
 
 // Helper to get priority color
@@ -15,8 +17,29 @@ const getPriorityColor = (priority: 'low' | 'medium' | 'high') => {
 };
 
 export default function TaskCard({ task }: { task: Task }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
-    <div className="bg-gray-700 rounded-lg p-4 shadow-md">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="bg-gray-700 rounded-lg p-4 shadow-md cursor-grab"
+    >
       <h3 className="font-bold text-lg mb-2">{task.title}</h3>
       <p className="text-gray-300 text-sm mb-3">{task.description}</p>
       <div
